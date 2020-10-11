@@ -1,0 +1,26 @@
+{
+  "name": "next-js-conf-talk",
+  "version": "1.0.0",
+  "description": "A talk about Next.js and Cosmic CMS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "mdx-deck index.mdx",
+    "build": "mdx-deck build index.mdx"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleccool213/next-js-conf-talk.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aleccool213/next-js-conf-talk/issues"
+  },
+  "homepage": "https://github.com/aleccool213/next-js-conf-talk#readme",
+  "dependencies": {
+    "mdx-deck": "3.0.13",
+    "code-surfer": "3.0.0-beta.1",
+    "prettier": "1.19.1"
+  }
+}
