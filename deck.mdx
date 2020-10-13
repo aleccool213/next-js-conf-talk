@@ -1,0 +1,190 @@
+## Static websites with Next.js and a headless CMS
+
+<Appear>
+
+* The new Static-site generation features in Next.js
+* Using a Headless CMS to manage content, [Cosmic CMS](https://www.cosmicjs.com/)
+
+</Appear>
+
+---
+
+### Alec Brunelle
+
+### Senior Software Developer @ [Unity Technologies](https://unity.com/) 🎮
+
+<Notes>
+
+Hi there! I'm Alec Brunelle and I'm a senior software developer at Unity Technologies on the Live Services team.
+
+</Notes>
+
+---
+
+Why is a backend developer doing this talk?
+
+<li>
+    Previous work had me using Next.js for over 2+ years
+</li>
+<li>
+    Side projects now
+</li>
+
+---
+
+Agenda
+
+* What is a real-time website? What is a static website?
+* How does Next.js achieve this?
+* Why use a headless CMS?
+* Integrating Cosmic CMS into a Next.js app
+
+---
+
+Who this talk is for:
+
+* Developers with React experience just starting to get into Next.js
+* Developers who haven't using the new Next.js SSG features
+* Developers who want to integrate web applications into a CMS
+
+---
+
+Websites generally fall into two buckets
+
+<Steps>
+    <li>Real-time<li>
+    <li>Static</li>
+</Steps>
+
+<Notes>
+
+</Notes>
+
+---
+
+Real-time Websites versus Static Websites
+
+* Plenty of use cases for both
+
+---
+
+Real-time Websites
+
+<Steps>
+    <li>HTML for a page is required on each request<li>
+    <li>Data is fetched on page load</li>
+    <li>Data is fetched on the same server which compiles the HTML/CSS/JS<li>
+    <li>Enables service-side rendering (SSR)</li>
+    <li>Requires Node.js process to run on the server</li>
+</Steps>
+
+---
+
+Static Webites
+
+<Steps>
+    <li>HTML for a page is generated at build time and reused with each request<li>
+    <li>Data is fetched at build time</li>
+    <li>Portable, just a folder of HTML/CSS/JS (old-school)</li>
+</Steps>
+
+---
+
+Next.js has done a great job being a framework for building real-time data applications. 
+
+Recently has added the ability to build static websites.
+
+---
+
+Pre Next.js 9.3
+
+
+```jsx file=./components/PageSSR.tsx subtitle="getInitialProps example" title="PageSSR.tsx"
+```
+
+---
+
+"The Great Split"
+
+* Next.js now lets you choose which rendering strategy you want for each page in your website
+* Next.js split `getInitialProps` into two functions, one for server-side rendering and one for static-site generation
+
+---
+
+Post Next.js 9.3
+
+
+```jsx file=./components/PageSSRNext93.tsx subtitle="getServerSideProps example" title="PageSSRNext93.tsx"
+```
+
+---
+
+How do we enable static-site generation?
+
+```jsx file=./components/PageSSG.tsx subtitle="getStaticProps example" title="PageSSG.tsx"
+```
+
+---
+
+Unique SSG things to think about
+
+* Page Data
+* Page Routes
+* Builds
+* Development and Previewing
+
+---
+
+## Page Data
+
+* We just covered this
+
+---
+
+## More involved Example
+
+
+---
+
+## Page Routes
+
+* 
+
+---
+
+## Example
+
+
+---
+
+## Builds
+
+* 
+
+---
+
+## Example
+
+
+---
+
+## Development and Previewing
+
+* 
+
+---
+
+## Example
+
+
+---
+
+Why use a CMS?
+
+* Website content and data can be managed by non-technical users
+* They shouldn't be using Git and pushing code
+  * I mean they can, but who really wants to do this
+
+---
+
+## The End

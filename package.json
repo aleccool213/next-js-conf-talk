@@ -2,11 +2,10 @@
   "name": "next-js-conf-talk",
   "version": "1.0.0",
   "description": "A talk about Next.js and Cosmic CMS",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "mdx-deck index.mdx",
-    "build": "mdx-deck build index.mdx"
+    "dev": "mdx-deck deck.mdx",
+    "build": "mdx-deck build deck.mdx"
   },
   "repository": {
     "type": "git",
