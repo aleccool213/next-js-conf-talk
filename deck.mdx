@@ -1,11 +1,11 @@
-## Static websites with Next.js and a headless CMS
+## Use Next.js static-site generation with Cosmic Headless CMS
 
-<Appear>
+<Notes>
 
 * The new Static-site generation features in Next.js
 * Using a Headless CMS to manage content, [Cosmic CMS](https://www.cosmicjs.com/)
 
-</Appear>
+</Notes>
 
 ---
 
@@ -21,13 +21,11 @@ Hi there! I'm Alec Brunelle and I'm a senior software developer at Unity Technol
 
 ---
 
-Why is a backend developer doing this talk?
-
 <li>
-    Previous work had me using Next.js for over 2+ years
+    Using Next.js for over 2+ years
 </li>
 <li>
-    Side projects now
+    Freelance and side-projects
 </li>
 
 ---
@@ -44,84 +42,129 @@ Agenda
 Who this talk is for:
 
 * Developers with React experience just starting to get into Next.js
-* Developers who haven't using the new Next.js SSG features
-* Developers who want to integrate web applications into a CMS
+* Developers who haven't started using the new Next.js SSG features
+* Developers who want to integrate websites into a Headless CMS
 
 ---
 
-Websites generally fall into two buckets
+#### Websites generally fall into two buckets
 
 <Steps>
-    <li>Real-time<li>
+    <li>Real-time</li>
     <li>Static</li>
 </Steps>
 
-<Notes>
-
-</Notes>
-
 ---
 
-Real-time Websites versus Static Websites
+#### Real-time Websites versus Static Websites
 
 * Plenty of use cases for both
+* One is not more complex than the other
 
 ---
 
-Real-time Websites
+#### Real-time Websites
 
 <Steps>
-    <li>HTML for a page is required on each request<li>
-    <li>Data is fetched on page load</li>
-    <li>Data is fetched on the same server which compiles the HTML/CSS/JS<li>
+    <li>HTML is compiled on each request</li>
+    <li>Data for a page is fetched on page load</li>
+    <li>Data for a page is fetched on the same server which compiles the HTML/CSS/JS</li>
     <li>Enables service-side rendering (SSR)</li>
     <li>Requires Node.js process to run on the server</li>
 </Steps>
 
 ---
 
-Static Webites
+#### Static Websites
 
 <Steps>
-    <li>HTML for a page is generated at build time and reused with each request<li>
+    <li>HTML for a page is generated at build time and reused with each request</li>
     <li>Data is fetched at build time</li>
     <li>Portable, just a folder of HTML/CSS/JS (old-school)</li>
+    <li>Requires no process to run on the server</li> 
 </Steps>
 
 ---
 
-Next.js has done a great job being a framework for building real-time data applications. 
+### How does Next.js achieve both of these?
+
+---
+
+Next.js has primarly been a framework for building real-time data applications. 
 
 Recently has added the ability to build static websites.
 
 ---
 
-Pre Next.js 9.3
+`getInitialProps` runs at render time:
 
 
-```jsx file=./components/PageSSR.tsx subtitle="getInitialProps example" title="PageSSR.tsx"
+```jsx
+function PageSSR({ stars }) {
+  return <div>Next stars: {stars}</div>
+}
+
+PageSSR.getInitialProps = async (context) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const json = await res.json()
+  return { stars: json.stargazers_count }
+}
+
+export default PageSSR
 ```
 
 ---
 
-"The Great Split"
+#### "The Great Split"
+
+<Steps>
 
 * Next.js now lets you choose which rendering strategy you want for each page in your website
 * Next.js split `getInitialProps` into two functions, one for server-side rendering and one for static-site generation
+
+</Steps>
 
 ---
 
 Post Next.js 9.3
 
 
-```jsx file=./components/PageSSRNext93.tsx subtitle="getServerSideProps example" title="PageSSRNext93.tsx"
+```jsx
+function PageSSRNext93({ stars }) {
+  return <div>Next stars: {stars}</div>
+}
+
+PageSSRNext93.getServerSideProps = async (context) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const json = await res.json()
+  return { stars: json.stargazers_count }
+}
+
+export default PageSSRNext93
 ```
 
 ---
 
 How do we enable static-site generation?
 
-```jsx file=./components/PageSSG.tsx subtitle="getStaticProps example" title="PageSSG.tsx"
+Next.js gives us the ability to do this per page
+
+---
+
+`getStaticProps` runs at build time:
+
+```jsx
+function PageSSG({ stars }) {
+  return <div>Next stars: {stars}</div>
+}
+
+PageSSG.getStaticProps = async (context) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const json = await res.json()
+  return { stars: json.stargazers_count }
+}
+
+export default PageSSG
 ```
 
 ---
@@ -138,11 +181,27 @@ Unique SSG things to think about
 ## Page Data
 
 * We just covered this
+* Get the data needed to render the page
 
 ---
 
-## More involved Example
+## Example getting blog post data from an API
 
+```javascript
+export async function getStaticProps({ params }) {
+  const data = await api.getPost(params.slug);
+  const content = await markdownToHtml(data.post?.metadata?.content || "");
+
+  return {
+    props: {
+      post: {
+        ...data.post,
+        content,
+      },
+    },
+  };
+}
+```
 
 ---
 
