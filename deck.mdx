@@ -32,18 +32,30 @@ Hi there! I'm Alec Brunelle and I'm a senior software developer at Unity Technol
 
 Agenda
 
-* What is a real-time website? What is a static website?
+* What is a real-time website? What is a static website? Why a CMS?
 * How does Next.js achieve this?
 * Why use a headless CMS?
-* Integrating Cosmic CMS into a Next.js app
+* Walkthrough: Integrating Cosmic CMS into a Next.js app
 
 ---
 
 Who this talk is for:
 
-* Developers with React experience just starting to get into Next.js
+* Developers with React experience just getting into Next.js
 * Developers who haven't started using the new Next.js SSG features
-* Developers who want to integrate websites into a Headless CMS
+* Developers who want to integrate a Headless CMS into a Next.js app
+
+---
+
+### You have a problem
+
+<Steps>
+
+  - You need to make a website
+  - The data doesn't change too often
+  - The admins don't want to manage the content using a Database or Git repo
+
+</Steps>
 
 ---
 
@@ -58,8 +70,19 @@ Who this talk is for:
 
 #### Real-time Websites versus Static Websites
 
-* Plenty of use cases for both
-* One is not more complex than the other
+Plenty of use cases for both
+
+---
+
+#### Common misconception
+
+Static sites are less complex
+
+---
+
+#### Common misconception
+
+~~Static sites are less complex~~
 
 ---
 
@@ -71,6 +94,7 @@ Who this talk is for:
     <li>Data for a page is fetched on the same server which compiles the HTML/CSS/JS</li>
     <li>Enables service-side rendering (SSR)</li>
     <li>Requires Node.js process to run on the server</li>
+    <li>Example: Social network or Messenger</li>
 </Steps>
 
 ---
@@ -81,7 +105,8 @@ Who this talk is for:
     <li>HTML for a page is generated at build time and reused with each request</li>
     <li>Data is fetched at build time</li>
     <li>Portable, just a folder of HTML/CSS/JS (old-school)</li>
-    <li>Requires no process to run on the server</li> 
+    <li>Requires no process to run on the server</li>
+    <li>Example: A blog, band website or e-commerce store</li>
 </Steps>
 
 ---
@@ -180,14 +205,25 @@ Unique SSG things to think about
 
 ## Page Data
 
-* We just covered this
 * Get the data needed to render the page
+* Example, a blog post or a concert date
+
+---
+
+Places it can be stored
+
+<Steps>
+    <li>The same Git Repo as the website</li>
+    <li>External API you don't own</li>
+    <li>CMS you manage (Cosmic, etc)</li>
+</Steps>
 
 ---
 
 ## Example getting blog post data from an API
 
 ```javascript
+// pages/posts/[slug].js
 export async function getStaticProps({ params }) {
   const data = await api.getPost(params.slug);
   const content = await markdownToHtml(data.post?.metadata?.content || "");
@@ -207,42 +243,157 @@ export async function getStaticProps({ params }) {
 
 ## Page Routes
 
-* 
+* Get all potential page routes
+* In a real-time web app, these are usually determined as run-time
+* Example: https://my-blog.com/posts/my-first-blog-post
 
 ---
 
-## Example
+## Example creating routes based on blog post slugs
+
+```javascript
+// pages/posts/[slug].js
+export async function getStaticPaths() {
+  const allPosts = (await getAllPostsWithSlug()) || [];
+  return {
+    paths: allPosts.map((post) => `/posts/${post.slug}`),
+    fallback: true,
+  };
+}
+```
 
 
 ---
 
 ## Builds
 
-* 
+* When you build, the data is fetched
+* Can be done in various places
 
 ---
 
 ## Example
 
+* Locally, then send files to server for hosting
+* Externally on a service like Vercel which handles building and deployments
+* When an event happens, E.g. Webhooks
 
 ---
 
 ## Development and Previewing
 
-* 
+* When you develop the website locally
+* Next.js will grab the content as you navigate
+  * Need to call `build` for it to get all content
 
 ---
 
 ## Example
 
+* Using [Next.js preview mode](https://nextjs.org/docs/advanced-features/preview-mode) in Cosmic CMS to show draft content
 
 ---
 
-Why use a CMS?
+Why use a Headless CMS?
 
 * Website content and data can be managed by non-technical users
 * They shouldn't be using Git and pushing code
-  * I mean they can, but who really wants to do this
+* Example: You are a freelancer and build a website, want to hand-off website to the client. They can use the CMS to manage the content.
+
+---
+
+Walkthrough: Using Cosmic with Next.js SSG
+
+---
+
+[Cosmic](https://www.cosmicjs.com/) is an intuitive, powerful, and simple-to-use service which lets us get up and running quickly. 
+
+---
+
+One of the best parts is that they provide [many starter apps](https://www.cosmicjs.com/apps) that you can preview or fork.
+
+---
+
+*Switches over to screen share*
+
+---
+
+Creating the Cosmic Project
+
+<Notes>
+
+- Create the cosmic project from the next.js starter app: https://www.cosmicjs.com/apps/nextjs-static-blog
+- explain that it creates a cosmic bucket (sort of like where a single websites data lives)
+- creates some data types which are usually in a blog (Posts, Authors)
+- creates some example data in those data types
+- now that we have the content, time to build the blog!
+
+</Notes>
+
+---
+
+Local Development
+
+<Notes>
+
+- clone the repo: https://github.com/vercel/next.js/tree/canary/examples/cms-cosmic
+- show pages and components, with tailwind for css
+- mention how basic it is, show around the app for a bit
+- time to show running: yarn dev
+- show it working (you already entered in keys to make it work)
+
+</Notes>
+
+---
+
+Next.js SSG Bits
+
+<Notes>
+
+- show where `getStaticProps` and `getStaticPaths` lives
+  - explain how they work
+
+</Notes>
+
+---
+
+Deployment with Vercel
+
+<Notes>
+
+- show pushing the code to a new repo with github cli
+- import the project on the vercel dashboard, enter the same env keys
+- show website working
+
+</Notes>
+
+---
+
+
+Webhooks
+
+<Notes>
+
+- explain why webhooks are needed
+- explain how right now new content only is published when master is pushed to and vercel builds the website
+- can set up a deploy hook on Vercel
+- show getting the webhook url in cosmic and entering in on Vercel
+
+</Notes>
+
+---
+
+Preview Mode
+
+<Notes>
+
+- explain preview mode
+- explain how everything you publish in cosmic would be seen in production when you deployed
+- explain how it allows you to save drafts of your content on cosmic and view it locally
+  - great to see how things look locally
+- show how to setup preview mode
+
+</Notes>
 
 ---
 
