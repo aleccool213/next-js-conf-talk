@@ -1,4 +1,10 @@
-## Use Next.js static-site generation with Cosmic Headless CMS
+import { CodeSurfer } from "code-surfer"
+
+import { themes } from 'mdx-deck'
+
+export const theme = themes.dark
+
+## Use Next.js static-site generation with Cosmic Headless CMS 🚀
 
 <Notes>
 
@@ -9,9 +15,11 @@
 
 ---
 
+<img src="https://res.cloudinary.com/dscgr6mcw/image/upload/v1602941429/next-js-conf-talk/hx2lR_DI_400x400.png" style={{width: '150px', height:'150px'}} />
+
 ### Alec Brunelle
 
-### Senior Software Developer @ [Unity Technologies](https://unity.com/) 🎮
+### Software Developer @ [Unity Technologies](https://unity.com/) 🎮
 
 <Notes>
 
@@ -22,67 +30,67 @@ Hi there! I'm Alec Brunelle and I'm a senior software developer at Unity Technol
 ---
 
 <li>
-    Using Next.js for over 2+ years
+    Used Next.js for over 2+ years
 </li>
 <li>
-    Freelance and side-projects
+    Professionally, Freelance and side-projects
 </li>
+
+<Notes>
+
+Used next.js with a lot of real-time apps, just starting to get into ssg features, exciting times
+
+</Notes>
 
 ---
 
 Agenda
 
-* What is a real-time website? What is a static website? Why a CMS?
+* What is a real-time website? What is a static website?
 * How does Next.js achieve this?
 * Why use a headless CMS?
-* Walkthrough: Integrating Cosmic CMS into a Next.js app
+* Integrating Cosmic CMS into a Next.js app
 
 ---
 
 Who this talk is for:
 
-* Developers with React experience just getting into Next.js
-* Developers who haven't started using the new Next.js SSG features
-* Developers who want to integrate a Headless CMS into a Next.js app
+* Just getting into Next.js
+* Haven't started using the new Next.js SSG features
+* Want to integrate a Headless CMS into a Next.js app
+
+<Notes>
+
+- want to make sure to set the right context for people
+- meet them where they are
+
+</Notes>
 
 ---
 
-### You have a problem
+### You need to make a website
 
 <Steps>
 
-  - You need to make a website
-  - The data doesn't change too often
+  - The content is known ahead of time
   - The admins don't want to manage the content using a Database or Git repo
 
 </Steps>
 
 ---
 
-#### Websites generally fall into two buckets
+#### Two Options
 
 <Steps>
     <li>Real-time</li>
     <li>Static</li>
 </Steps>
 
----
+<Notes>
 
-#### Real-time Websites versus Static Websites
+You have two options when choosing to make this website. Two drastically different paths which you need to choose and stick with.
 
-Plenty of use cases for both
-
----
-
-#### Common misconception
-
-Static sites are less complex
-
----
-
-#### Common misconception
-
-~~Static sites are less complex~~
+</Notes>
 
 ---
 
@@ -93,9 +101,26 @@ Static sites are less complex
     <li>Data for a page is fetched on page load</li>
     <li>Data for a page is fetched on the same server which compiles the HTML/CSS/JS</li>
     <li>Enables service-side rendering (SSR)</li>
-    <li>Requires Node.js process to run on the server</li>
-    <li>Example: Social network or Messenger</li>
+    <li>Requires a process (Node.js for example) to run on the server</li>
+    <li>Example: Social network or Chat App</li>
 </Steps>
+
+<Notes>
+
+- discuss the meaning behind every bullet point
+
+</Notes>
+
+---
+
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.ilovefreesoftware.com%2Fwp-content%2Fuploads%2F2019%2F05%2FHow-to-Delete-all-Facebook-wall-Posts.gif&f=1&nofb=1" style={{height:'500px', width:'500px'}}/>
+
+<Notes>
+
+- explain that the user is changing content on the website
+- other users will see the content change in real time
+
+</Notes>
 
 ---
 
@@ -109,6 +134,22 @@ Static sites are less complex
     <li>Example: A blog, band website or e-commerce store</li>
 </Steps>
 
+<Notes>
+
+- discuss the meaning behind every bullet point
+
+</Notes>
+
+---
+
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F1.bp.blogspot.com%2F-yAn8yhjtq5c%2FUWFCP85dxjI%2FAAAAAAAAGKQ%2FBlidlwjhGmE%2Fs1600%2FTrendy%2BBlogger%2BTemplate%2BWith%2BInfinite%2BScrolling%2BEffects.gif&f=1&nofb=1" style={{height:'600px', width:'600px'}}/>
+
+---
+
+#### Real-time Websites versus Static Websites
+
+As you can see, plenty of use-cases for both
+
 ---
 
 ### How does Next.js achieve both of these?
@@ -121,10 +162,9 @@ Recently has added the ability to build static websites.
 
 ---
 
-`getInitialProps` runs at render time:
+<CodeSurfer>
 
-
-```jsx
+```js subtitle="Getting some Github stars using SSR"
 function PageSSR({ stars }) {
   return <div>Next stars: {stars}</div>
 }
@@ -138,23 +178,38 @@ PageSSR.getInitialProps = async (context) => {
 export default PageSSR
 ```
 
+```js 4:5 subtitle="getInitialProps runs at render time"
+function PageSSR({ stars }) {
+  return <div>Next stars: {stars}</div>
+}
+
+PageSSR.getInitialProps = async (context) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const json = await res.json()
+  return { stars: json.stargazers_count }
+}
+
+export default PageSSR
+```
+
+</CodeSurfer>
+
 ---
 
 #### "The Great Split"
 
 <Steps>
 
-* Next.js now lets you choose which rendering strategy you want for each page in your website
-* Next.js split `getInitialProps` into two functions, one for server-side rendering and one for static-site generation
+* As of Next.js 9.3, allows you to static render pages
+* Split `getInitialProps` into two functions, one for SSR and one for SSG
 
 </Steps>
 
 ---
 
-Post Next.js 9.3
+<CodeSurfer>
 
-
-```jsx
+```js subtitle="Post Next.js 9.3"
 function PageSSRNext93({ stars }) {
   return <div>Next stars: {stars}</div>
 }
@@ -167,6 +222,8 @@ PageSSRNext93.getServerSideProps = async (context) => {
 
 export default PageSSRNext93
 ```
+
+</CodeSurfer>
 
 ---
 
@@ -388,6 +445,7 @@ Preview Mode
 <Notes>
 
 - explain preview mode
+  - explain how the work for this is already done in the example
 - explain how everything you publish in cosmic would be seen in production when you deployed
 - explain how it allows you to save drafts of your content on cosmic and view it locally
   - great to see how things look locally
