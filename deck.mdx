@@ -19,6 +19,8 @@ export const theme = themes.dark
 
 ### Alec Brunelle
 
+### Developer Advocate for [Cosmic CMS](https://www.cosmicjs.com/) 🌎
+
 ### Software Developer @ [Unity Technologies](https://unity.com/) 🎮
 
 <Notes>
@@ -312,6 +314,12 @@ export default PageSSG
 
 ---
 
+#### Example: Cosmic CMS
+
+<img src="https://res.cloudinary.com/dscgr6mcw/image/upload/v1600443356/next-js-cosmic-post/CleanShot_2020-09-18_at_10.15.26_2x.png" style={{width: '850px', height: '850px'}} />
+
+---
+
 <CodeSurfer>
 
 ```js subtitle="pages/posts/[slug].js" title="Example getting blog post data from an API"
@@ -466,10 +474,6 @@ One of the best parts is that they provide [many starter apps](https://www.cosmi
 
 ---
 
-*Switches over to screen share*
-
----
-
 Creating the Cosmic Project
 
 <Notes>
@@ -484,32 +488,74 @@ Creating the Cosmic Project
 
 ---
 
-Development
+## Step 1: Development
 
 <Notes>
 
-- clone the repo: https://github.com/vercel/next.js/tree/canary/examples/cms-cosmic
-- show pages and components, with tailwind for css
-- mention how basic it is, show around the app for a bit
-- time to show running: yarn dev
-- show it working (you already entered in keys to make it work)
+- show the repo Im basing the project on: https://github.com/vercel/next.js/tree/canary/examples/cms-cosmic
+- things to show:
+  - package.json
+  - tailwind css for styles
+  - components section that has nothing to do with next, all react code
+  - index page shows a hero post, and a few other stories
+  - need to add a way for the index page to get all post data
 
 </Notes>
 
 ---
 
-Next.js SSG Bits
+## Step 2: Adding Next.js SSG Bits
 
 <Notes>
+- show we have some API functions already which will get our data
+  - lets add some code to do that
 
-- show where `getStaticProps` and `getStaticPaths` lives
-  - explain how they work
+```javascript title="index.js" subtitle="getStaticProps"
+import { getAllPostsForHome } from '@/lib/api'
+
+export async function getStaticProps({ preview }) {
+  const allPosts = (await getAllPostsForHome(preview)) || []
+  return {
+    props: { allPosts },
+  }
+}
+```
+
+
+```javascript title="[slug].js" subtitle="getStaticProps"
+import { getAllPostsWithSlug, getPostAndMorePosts } from '@/lib/api'
+import markdownToHtml from '@/lib/markdownToHtml'
+
+export async function getStaticProps({ params, preview = null }) {
+  const data = await getPostAndMorePosts(params.slug, preview)
+  const content = await markdownToHtml(data.post?.metadata?.content || '')
+
+  return {
+    props: {
+      preview,
+      post: {
+        ...data.post,
+        content,
+      },
+      morePosts: data.morePosts || [],
+    },
+  }
+}
+
+export async function getStaticPaths() {
+  const allPosts = (await getAllPostsWithSlug()) || []
+  return {
+    paths: allPosts.map((post) => `/posts/${post.slug}`),
+    fallback: true,
+  }
+}
+```
 
 </Notes>
 
 ---
 
-Deployment with Vercel
+## Step 3: Deployment with Vercel
 
 <Notes>
 
@@ -522,7 +568,7 @@ Deployment with Vercel
 ---
 
 
-Webhooks
+## Step 4: Webhooks
 
 <Notes>
 
@@ -535,12 +581,13 @@ Webhooks
 
 ---
 
-Preview Mode
+## Step 5: Preview Mode
 
 <Notes>
 
 - explain preview mode
   - explain how the work for this is already done in the example
+- it is enabled when you render pages at render time (which happens when you run next.js locally with SSG)
 - explain how everything you publish in cosmic would be seen in production when you deployed
 - explain how it allows you to save drafts of your content on cosmic and view it locally
   - great to see how things look locally
