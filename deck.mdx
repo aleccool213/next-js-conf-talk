@@ -164,7 +164,7 @@ Recently has added the ability to build static websites.
 
 <CodeSurfer>
 
-```js subtitle="Getting some Github stars using SSR"
+```js title="Getting some Github stars using SSR"
 function PageSSR({ stars }) {
   return <div>Next stars: {stars}</div>
 }
@@ -209,7 +209,21 @@ export default PageSSR
 
 <CodeSurfer>
 
-```js subtitle="Post Next.js 9.3"
+```js title="Post Next.js 9.3"
+function PageSSRNext93({ stars }) {
+  return <div>Next stars: {stars}</div>
+}
+
+PageSSRNext93.getServerSideProps = async (context) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const json = await res.json()
+  return { stars: json.stargazers_count }
+}
+
+export default PageSSRNext93
+```
+
+```js 4:5 subtitle="getInitialProps is now getServerSideProps"
 function PageSSRNext93({ stars }) {
   return <div>Next stars: {stars}</div>
 }
@@ -227,15 +241,15 @@ export default PageSSRNext93
 
 ---
 
-How do we enable static-site generation?
+### How do we enable static-site generation?
 
 Next.js gives us the ability to do this per page
 
 ---
 
-`getStaticProps` runs at build time:
+<CodeSurfer>
 
-```jsx
+```js title="An SSG page"
 function PageSSG({ stars }) {
   return <div>Next stars: {stars}</div>
 }
@@ -249,25 +263,46 @@ PageSSG.getStaticProps = async (context) => {
 export default PageSSG
 ```
 
+```js 4:5 subtitle="getStaticProps runs at build time"
+function PageSSG({ stars }) {
+  return <div>Next stars: {stars}</div>
+}
+
+PageSSG.getStaticProps = async (context) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const json = await res.json()
+  return { stars: json.stargazers_count }
+}
+
+export default PageSSG
+```
+
+</CodeSurfer>
+
 ---
 
-Unique SSG things to think about
+### Unique SSG things to think about
 
-* Page Data
-* Page Routes
+<Steps>
+
+* Page Data (Content)
+* Routes
 * Builds
 * Development and Previewing
+
+</Steps>
 
 ---
 
 ## Page Data
 
-* Get the data needed to render the page
+* Touched on this already
+* The data needed to render the page
 * Example, a blog post or a concert date
 
 ---
 
-Places it can be stored
+### Places it can be stored
 
 <Steps>
     <li>The same Git Repo as the website</li>
@@ -277,12 +312,15 @@ Places it can be stored
 
 ---
 
-## Example getting blog post data from an API
+<CodeSurfer>
 
-```javascript
-// pages/posts/[slug].js
+```js subtitle="pages/posts/[slug].js" title="Example getting blog post data from an API"
+function BlogPost({ post }) {
+  return {post.content};
+}
+
 export async function getStaticProps({ params }) {
-  const data = await api.getPost(params.slug);
+  const data = await api.getPostMarkdown(params.slug);
   const content = await markdownToHtml(data.post?.metadata?.content || "");
 
   return {
@@ -296,22 +334,40 @@ export async function getStaticProps({ params }) {
 }
 ```
 
+</CodeSurfer>
+
 ---
 
 ## Page Routes
 
-* Get all potential page routes
-* In a real-time web app, these are usually determined as run-time
-* Example: https://my-blog.com/posts/my-first-blog-post
+* Get all page routes
+* Example: `https://my-blog.com/posts/my-first-blog-post`
 
 ---
 
-## Example creating routes based on blog post slugs
+<CodeSurfer>
 
-```javascript
-// pages/posts/[slug].js
+```js title="Example creating routes based on blog post slugs" subtitle="pages/posts/[slug].js"
+function BlogPost({ post }) {
+  return {post.content};
+}
+
+export async function getStaticProps({ params }) {
+  const data = await api.getPostMarkdown(params.slug);
+  const content = await markdownToHtml(data.post?.metadata?.content || "");
+
+  return {
+    props: {
+      post: {
+        ...data.post,
+        content,
+      },
+    },
+  };
+}
+
 export async function getStaticPaths() {
-  const allPosts = (await getAllPostsWithSlug()) || [];
+  const allPosts = (await api.getAllPostsWithSlug()) || [];
   return {
     paths: allPosts.map((post) => `/posts/${post.slug}`),
     fallback: true,
@@ -319,43 +375,82 @@ export async function getStaticPaths() {
 }
 ```
 
+```js 19:25 title="Example creating routes based on blog post slugs" subtitle="pages/posts/[slug].js"
+function BlogPost({ post }) {
+  return {post.content};
+}
+
+export async function getStaticProps({ params }) {
+  const data = await api.getPostMarkdown(params.slug);
+  const content = await markdownToHtml(data.post?.metadata?.content || "");
+
+  return {
+    props: {
+      post: {
+        ...data.post,
+        content,
+      },
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  const allPosts = (await api.getAllPostsWithSlug()) || [];
+  return {
+    paths: allPosts.map((post) => `/posts/${post.slug}`),
+  };
+}
+```
+
+</CodeSurfer>
+
 
 ---
 
 ## Builds
 
+* A "build" is when you compile the website
 * When you build, the data is fetched
-* Can be done in various places
+* Can be done locally or on an external server
 
 ---
 
 ## Example
 
-* Locally, then send files to server for hosting
-* Externally on a service like Vercel which handles building and deployments
-* When an event happens, E.g. Webhooks
+* Locally, then send files to server
+* A service like Vercel
+  * When an event happens, E.g. Webhooks
 
 ---
 
 ## Development and Previewing
 
 * When you develop the website locally
-* Next.js will grab the content as you navigate
+* Next.js will get data as you load pages
   * Need to call `build` for it to get all content
 
 ---
 
 ## Example
 
-* Using [Next.js preview mode](https://nextjs.org/docs/advanced-features/preview-mode) in Cosmic CMS to show draft content
+Using [Next.js preview mode](https://nextjs.org/docs/advanced-features/preview-mode) in Cosmic CMS to show draft content
+
+(will show this working later)
 
 ---
 
-Why use a Headless CMS?
+## Why use a CMS?
 
-* Website content and data can be managed by non-technical users
+* Website content and data can be managed by Writers/Marketers/Content-Creators
 * They shouldn't be using Git and pushing code
 * Example: You are a freelancer and build a website, want to hand-off website to the client. They can use the CMS to manage the content.
+
+---
+
+### What does Headless CMS mean?
+
+* Just means the CMS does not handle rendering the content
+* Must be queried through an API
 
 ---
 
@@ -389,7 +484,7 @@ Creating the Cosmic Project
 
 ---
 
-Local Development
+Development
 
 <Notes>
 
