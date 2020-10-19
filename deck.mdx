@@ -6,22 +6,13 @@ export const theme = themes.dark
 
 ## Use Next.js static-site generation with Cosmic Headless CMS 🚀
 
-<Notes>
-
-* The new Static-site generation features in Next.js
-* Using a Headless CMS to manage content, [Cosmic CMS](https://www.cosmicjs.com/)
-
-</Notes>
-
----
+### Next.js Conf 2020
 
 <img src="https://res.cloudinary.com/dscgr6mcw/image/upload/v1602941429/next-js-conf-talk/hx2lR_DI_400x400.png" style={{width: '150px', height:'150px'}} />
 
 ### Alec Brunelle
 
 ### Developer Advocate for [Cosmic CMS](https://www.cosmicjs.com/) 🌎
-
-### Software Developer @ [Unity Technologies](https://unity.com/) 🎮
 
 <Notes>
 
@@ -31,11 +22,13 @@ Hi there! I'm Alec Brunelle and I'm a senior software developer at Unity Technol
 
 ---
 
+### Who am I?
+
 <li>
-    Used Next.js for over 2+ years
+    Full stack developer 5+ years
 </li>
 <li>
-    Professionally, Freelance and side-projects
+    Next.js 2+ years
 </li>
 
 <Notes>
@@ -46,20 +39,21 @@ Used next.js with a lot of real-time apps, just starting to get into ssg feature
 
 ---
 
-Agenda
+### Agenda
 
 * What is a real-time website? What is a static website?
-* How does Next.js achieve this?
-* Why use a headless CMS?
+* New Next.js SSG features
+* Why use a CMS?
+* Headless CMS? What now?
 * Integrating Cosmic CMS into a Next.js app
 
 ---
 
-Who this talk is for:
+### Who this talk is for 👩‍💻👨‍💻
 
-* Just getting into Next.js
-* Haven't started using the new Next.js SSG features
-* Want to integrate a Headless CMS into a Next.js app
+* Getting into Next.js
+* Haven't used new Next.js SSG features
+* Integrate a Headless CMS into Next.js
 
 <Notes>
 
@@ -70,18 +64,11 @@ Who this talk is for:
 
 ---
 
-### You need to make a website
-
-<Steps>
-
-  - The content is known ahead of time
-  - The admins don't want to manage the content using a Database or Git repo
-
-</Steps>
+### Problem: You need to make a website
 
 ---
 
-#### Two Options
+#### You Have Two Options
 
 <Steps>
     <li>Real-time</li>
@@ -96,15 +83,17 @@ You have two options when choosing to make this website. Two drastically differe
 
 ---
 
-#### Real-time Websites
+#### What are the differences? 🤔
+
+---
+
+#### Real-time Websites 
 
 <Steps>
-    <li>HTML is compiled on each request</li>
-    <li>Data for a page is fetched on page load</li>
-    <li>Data for a page is fetched on the same server which compiles the HTML/CSS/JS</li>
-    <li>Enables service-side rendering (SSR)</li>
-    <li>Requires a process (Node.js for example) to run on the server</li>
     <li>Example: Social network or Chat App</li>
+    <li>Data for a page is fetched on page load</li>
+    <li>HTML is compiled on each request</li>
+    <li>Requires a process (Node.js for Next.js) to run on the server</li>
 </Steps>
 
 <Notes>
@@ -114,6 +103,8 @@ You have two options when choosing to make this website. Two drastically differe
 </Notes>
 
 ---
+
+### User editing dynamic content
 
 <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.ilovefreesoftware.com%2Fwp-content%2Fuploads%2F2019%2F05%2FHow-to-Delete-all-Facebook-wall-Posts.gif&f=1&nofb=1" style={{height:'500px', width:'500px'}}/>
 
@@ -129,11 +120,11 @@ You have two options when choosing to make this website. Two drastically differe
 #### Static Websites
 
 <Steps>
-    <li>HTML for a page is generated at build time and reused with each request</li>
+    <li>Example: A blog, band website or e-commerce store</li>
     <li>Data is fetched at build time</li>
+    <li>All HTML is generated at build time</li>
     <li>Portable, just a folder of HTML/CSS/JS (old-school)</li>
     <li>Requires no process to run on the server</li>
-    <li>Example: A blog, band website or e-commerce store</li>
 </Steps>
 
 <Notes>
@@ -144,7 +135,7 @@ You have two options when choosing to make this website. Two drastically differe
 
 ---
 
-<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F1.bp.blogspot.com%2F-yAn8yhjtq5c%2FUWFCP85dxjI%2FAAAAAAAAGKQ%2FBlidlwjhGmE%2Fs1600%2FTrendy%2BBlogger%2BTemplate%2BWith%2BInfinite%2BScrolling%2BEffects.gif&f=1&nofb=1" style={{height:'600px', width:'600px'}}/>
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F1.bp.blogspot.com%2F-yAn8yhjtq5c%2FUWFCP85dxjI%2FAAAAAAAAGKQ%2FBlidlwjhGmE%2Fs1600%2FTrendy%2BBlogger%2BTemplate%2BWith%2BInfinite%2BScrolling%2BEffects.gif&f=1&nofb=1" style={{height:'700px', width:'700px'}}/>
 
 ---
 
@@ -158,7 +149,9 @@ As you can see, plenty of use-cases for both
 
 ---
 
-Next.js has primarly been a framework for building real-time data applications. 
+Next.js has only been a framework for building real-time data applications. 
+
+---
 
 Recently has added the ability to build static websites.
 
@@ -166,21 +159,7 @@ Recently has added the ability to build static websites.
 
 <CodeSurfer>
 
-```js title="Getting some Github stars using SSR"
-function PageSSR({ stars }) {
-  return <div>Next stars: {stars}</div>
-}
-
-PageSSR.getInitialProps = async (context) => {
-  const res = await fetch('https://api.github.com/repos/vercel/next.js')
-  const json = await res.json()
-  return { stars: json.stargazers_count }
-}
-
-export default PageSSR
-```
-
-```js 4:5 subtitle="getInitialProps runs at render time"
+```js title="Getting some Github 🌟 using SSR" subtitle="getInitialProps runs at render time"
 function PageSSR({ stars }) {
   return <div>Next stars: {stars}</div>
 }
@@ -243,6 +222,10 @@ export default PageSSRNext93
 
 ---
 
+#### You get the star count at render time
+
+---
+
 ### How do we enable static-site generation?
 
 Next.js gives us the ability to do this per page
@@ -283,7 +266,11 @@ export default PageSSG
 
 ---
 
-### Unique SSG things to think about
+#### You get the star count at build time
+
+---
+
+### Unique SSG things to think about 🧠
 
 <Steps>
 
@@ -296,7 +283,7 @@ export default PageSSG
 
 ---
 
-## Page Data
+## Page Data 📝
 
 * Touched on this already
 * The data needed to render the page
@@ -304,7 +291,7 @@ export default PageSSG
 
 ---
 
-### Places it can be stored
+### Places it can be stored 
 
 <Steps>
     <li>The same Git Repo as the website</li>
@@ -316,7 +303,7 @@ export default PageSSG
 
 #### Example: Cosmic CMS
 
-<img src="https://res.cloudinary.com/dscgr6mcw/image/upload/v1600443356/next-js-cosmic-post/CleanShot_2020-09-18_at_10.15.26_2x.png" style={{width: '850px', height: '850px'}} />
+<img src="https://res.cloudinary.com/dscgr6mcw/image/upload/v1600443356/next-js-cosmic-post/CleanShot_2020-09-18_at_10.15.26_2x.png" style={{width: '950px', height: '950px'}} />
 
 ---
 
@@ -328,8 +315,30 @@ function BlogPost({ post }) {
 }
 
 export async function getStaticProps({ params }) {
-  const data = await api.getPostMarkdown(params.slug);
-  const content = await markdownToHtml(data.post?.metadata?.content || "");
+  const res = await fetch(`https://generic-cms.com/api/blog-posts?slug=${params.slug}`)
+  const json = await res.json()
+  const content = await markdownToHtml(json.post?.metadata?.content || "");
+
+  return {
+    props: {
+      post: {
+        ...data.post,
+        content,
+      },
+    },
+  };
+}
+```
+
+```js 5:18 
+function BlogPost({ post }) {
+  return {post.content};
+}
+
+export async function getStaticProps({ params }) {
+  const res = await fetch(`https://generic-cms.com/api/blog-posts?slug=${params.slug}`)
+  const json = await res.json()
+  const content = await markdownToHtml(json.post?.metadata?.content || "");
 
   return {
     props: {
@@ -346,7 +355,7 @@ export async function getStaticProps({ params }) {
 
 ---
 
-## Page Routes
+## Page Routes 🛣
 
 * Get all page routes
 * Example: `https://my-blog.com/posts/my-first-blog-post`
@@ -361,8 +370,9 @@ function BlogPost({ post }) {
 }
 
 export async function getStaticProps({ params }) {
-  const data = await api.getPostMarkdown(params.slug);
-  const content = await markdownToHtml(data.post?.metadata?.content || "");
+  const res = await fetch(`https://generic-cms.com/api/blog-posts?slug=${params.slug}`)
+  const json = await res.json()
+  const content = await markdownToHtml(json.post?.metadata?.content || "");
 
   return {
     props: {
@@ -376,21 +386,24 @@ export async function getStaticProps({ params }) {
 
 export async function getStaticPaths() {
   const allPosts = (await api.getAllPostsWithSlug()) || [];
+  const res = await fetch(`https://generic-cms.com/api/all-blog-posts`)
+  const json = await res.json()
   return {
-    paths: allPosts.map((post) => `/posts/${post.slug}`),
+    paths: json.allPosts.map((post) => `/posts/${post.slug}`),
     fallback: true,
   };
 }
 ```
 
-```js 19:25 title="Example creating routes based on blog post slugs" subtitle="pages/posts/[slug].js"
+```js 19:28 
 function BlogPost({ post }) {
   return {post.content};
 }
 
 export async function getStaticProps({ params }) {
-  const data = await api.getPostMarkdown(params.slug);
-  const content = await markdownToHtml(data.post?.metadata?.content || "");
+  const res = await fetch(`https://generic-cms.com/api/blog-posts?slug=${params.slug}`)
+  const json = await res.json()
+  const content = await markdownToHtml(json.post?.metadata?.content || "");
 
   return {
     props: {
@@ -404,8 +417,11 @@ export async function getStaticProps({ params }) {
 
 export async function getStaticPaths() {
   const allPosts = (await api.getAllPostsWithSlug()) || [];
+  const res = await fetch(`https://generic-cms.com/api/all-blog-posts`)
+  const json = await res.json()
   return {
-    paths: allPosts.map((post) => `/posts/${post.slug}`),
+    paths: json.allPosts.map((post) => `/posts/${post.slug}`),
+    fallback: true,
   };
 }
 ```
@@ -415,33 +431,30 @@ export async function getStaticPaths() {
 
 ---
 
-## Builds
-
+## Builds 🏗
 * A "build" is when you compile the website
 * When you build, the data is fetched
-* Can be done locally or on an external server
 
 ---
 
 ## Example
 
 * Locally, then send files to server
-* A service like Vercel
-  * When an event happens, E.g. Webhooks
+* A service like Vercel or Netlify
+  * When an event happens, E.g. Content is edited in the CMS
 
 ---
 
-## Development and Previewing
+## Development and Previewing 🎮
 
-* When you develop the website locally
-* Next.js will get data as you load pages
-  * Need to call `build` for it to get all content
+* Publishing content
+* "Preview" mode for draft content
 
 ---
 
 ## Example
 
-Using [Next.js preview mode](https://nextjs.org/docs/advanced-features/preview-mode) in Cosmic CMS to show draft content
+Using [Next.js preview mode](https://nextjs.org/docs/advanced-features/preview-mode) with Cosmic CMS to show draft content
 
 (will show this working later)
 
@@ -462,7 +475,7 @@ Using [Next.js preview mode](https://nextjs.org/docs/advanced-features/preview-m
 
 ---
 
-Walkthrough: Using Cosmic with Next.js SSG
+## Next Up: Walkthrough Using Cosmic with Next.js SSG
 
 ---
 
@@ -492,6 +505,7 @@ Creating the Cosmic Project
 
 <Notes>
 
+- show the example blog we are making
 - show the repo Im basing the project on: https://github.com/vercel/next.js/tree/canary/examples/cms-cosmic
 - things to show:
   - package.json
@@ -508,6 +522,7 @@ Creating the Cosmic Project
 
 <Notes>
 - show we have some API functions already which will get our data
+  - integrates all content using a cosmic npm module
   - lets add some code to do that
 
 ```javascript title="index.js" subtitle="getStaticProps"
@@ -560,8 +575,15 @@ export async function getStaticPaths() {
 <Notes>
 
 - show pushing the code to a new repo with github cli
+  - gh repo create
 - import the project on the vercel dashboard, enter the same env keys
+  - 
 - show website working
+  - thats it
+- explain that whenever you push to master, site rebuilds, pulls the new data
+- need something like webhooks to trigger a rebuild when content is edited, which is likely something
+you want
+- demonstrate editing some content on cosmic and then redeploying the site
 
 </Notes>
 
@@ -572,9 +594,8 @@ export async function getStaticPaths() {
 
 <Notes>
 
-- explain why webhooks are needed
-- explain how right now new content only is published when master is pushed to and vercel builds the website
 - can set up a deploy hook on Vercel
+  - go to git integration settings
 - show getting the webhook url in cosmic and entering in on Vercel
 
 </Notes>
